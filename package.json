@@ -1,0 +1,26 @@
+{
+  "name": "40c3-cdc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Design assets of the Critical Decentralisation Cluster at 40C3",
+  "license": "CC0-1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node src/build.js",
+    "check:embed": "node src/build.js --check",
+    "lint": "biome check src test",
+    "typecheck": "tsc --noEmit --checkJs --strict --project tsconfig.json",
+    "docs:check": "node src/docs-check.js src",
+    "test": "node --test --experimental-test-coverage --test-coverage-lines=100 --test-coverage-include=src/** test/*.test.js",
+    "test:e2e": "node --test test/e2e/*.test.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.6",
+    "@types/node": "22.20.5",
+    "jsdoc": "4.0.5",
+    "typescript": "7.0.2"
+  }
+}
