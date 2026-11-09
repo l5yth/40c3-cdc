@@ -62,6 +62,28 @@ const STRIP_ALT = 'Line art of radios, routers and a mesh network';
 const ASSET_TITLES = { logo: 'Logos', pattern: 'Patterns', matrix: 'Matrix icons' };
 
 /**
+ * Item groups of the folders below `assets/`, in page order (SPEC D10). A folder
+ * without an entry is sorted by file stem only.
+ *
+ * @type {Object<string, ReadonlyArray<RegExp>>}
+ */
+const ASSET_ORDER = {
+  pattern: [/^Pattern\d+$/, /_neutral-on-transparent$/, /_dark-on-transparent$/, /_tiled-preview$/],
+};
+
+/**
+ * Find the group of a file stem.
+ *
+ * @param {string} stem - File name without extension.
+ * @param {ReadonlyArray<RegExp>} order - The groups in page order.
+ * @returns {number} Index of the first matching group, or the number of groups when none matches.
+ */
+function groupRank(stem, order) {
+  const rank = order.findIndex((group) => group.test(stem));
+  return rank === -1 ? order.length : rank;
+}
+
+/**
  * Pick the preview background from a file stem: files with dark ink need the
  * light one.
  *
@@ -130,9 +152,10 @@ export function fileItem(stem, paths) {
  * Turn a list of files into items, one per stem.
  *
  * @param {string[]} paths - Paths below the site root.
- * @returns {Item[]} Items sorted by stem.
+ * @param {ReadonlyArray<RegExp>} [order] - Item groups in page order. A stem in no group comes last.
+ * @returns {Item[]} Items sorted by group, then by stem.
  */
-export function groupItems(paths) {
+export function groupItems(paths, order = []) {
   /** @type {Map<string, string[]>} */
   const groups = new Map();
   for (const path of paths) {
@@ -140,7 +163,7 @@ export function groupItems(paths) {
     groups.set(stem, [...(groups.get(stem) ?? []), path]);
   }
   return [...groups]
-    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .sort(([a], [b]) => groupRank(a, order) - groupRank(b, order) || (a < b ? -1 : 1))
     .map(([stem, files]) => fileItem(stem, files));
 }
 
@@ -202,9 +225,10 @@ export function stillSection() {
  * @param {string} root - Repository root.
  * @param {string} parent - Parent folder, such as `assets` or `designs`.
  * @param {Object<string, string>} [titles] - Section headings by folder name.
+ * @param {Object<string, ReadonlyArray<RegExp>>} [orders] - Item groups by folder name.
  * @returns {Section[]} The sections.
  */
-export function folderSections(root, parent, titles = {}) {
+export function folderSections(root, parent, titles = {}, orders = {}) {
   const folders = readdirSync(join(root, parent), { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
@@ -214,7 +238,7 @@ export function folderSections(root, parent, titles = {}) {
   return [...known, ...others].map((name) => ({
     id: name,
     title: titles[name] ?? name,
-    items: groupItems(listFolder(root, `${parent}/${name}`)),
+    items: groupItems(listFolder(root, `${parent}/${name}`), orders[name]),
   }));
 }
 
@@ -228,7 +252,7 @@ export function buildCatalog(root) {
   return [
     animationSection(),
     stillSection(),
-    ...folderSections(root, 'assets', ASSET_TITLES),
+    ...folderSections(root, 'assets', ASSET_TITLES, ASSET_ORDER),
     ...folderSections(root, 'designs'),
   ];
 }

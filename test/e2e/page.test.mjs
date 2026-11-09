@@ -54,18 +54,40 @@ function attributes(selector, attribute) {
 
 test('F1: the page lists every item', async () => {
   const items = await attributes('[data-item]', 'data-item');
-  assert.equal(items.length, 65);
+  assert.equal(items.length, 58);
+  assert.deepEqual(
+    items.filter((stem) => /green|shuffled|^(conveyor|strip)-0/.test(stem)),
+    [],
+    'nothing off brand',
+  );
   const play = await attributes('[data-item]:has([data-play])', 'data-item');
-  assert.equal(play.length, 23, 'animation files');
+  assert.equal(play.length, 21, 'animation files');
   const sections = await browser.evaluate(
     `[...document.querySelectorAll('[data-section]')].map((s) => [s.dataset.section, s.querySelectorAll('[data-item]').length])`,
   );
   assert.deepEqual(sections, [
-    ['animations', 23],
-    ['stills', 7],
+    ['animations', 21],
+    ['stills', 6],
     ['logo', 9],
-    ['pattern', 16],
+    ['pattern', 12],
     ['matrix', 10],
+  ]);
+});
+
+test('F8: the patterns go masters, neutral, dark, tiled previews', async () => {
+  assert.deepEqual(await attributes('[data-section="pattern"] [data-item]', 'data-item'), [
+    'Pattern4',
+    'Pattern5',
+    'Pattern6',
+    'Pattern4_neutral-on-transparent',
+    'Pattern5_neutral-on-transparent',
+    'Pattern6_neutral-on-transparent',
+    'Pattern4_dark-on-transparent',
+    'Pattern5_dark-on-transparent',
+    'Pattern6_dark-on-transparent',
+    'Pattern4_tiled-preview',
+    'Pattern5_tiled-preview',
+    'Pattern6_tiled-preview',
   ]);
 });
 
@@ -103,15 +125,15 @@ test('F2: the copy button puts the snippet on the real clipboard', async () => {
 
 test('F3: every animation has a fullscreen link', async () => {
   const links = await attributes('[data-play]', 'href');
-  assert.equal(links.length, 23);
+  assert.equal(links.length, 21);
   for (const link of links) {
-    assert.match(link, /^https:\/\/l5yth\.github\.io\/40c3-cdc\/play\/\?a=[a-z]+&c=[05AB]$/);
+    assert.match(link, /^https:\/\/l5yth\.github\.io\/40c3-cdc\/play\/\?a=[a-z]+&c=[5AB]$/);
   }
 });
 
 test('F4: every download link answers', async () => {
   const links = await attributes('[data-download]', 'href');
-  assert.ok(links.length >= 65);
+  assert.ok(links.length >= 58);
   for (const link of links) {
     const response = await fetch(`${server.origin}/${link}`);
     assert.equal(response.status, 200, link);

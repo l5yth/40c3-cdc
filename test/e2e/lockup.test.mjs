@@ -174,7 +174,7 @@ test('D6: under reduced motion no animated file has a running animation', async 
   const files = readdirSync(join(ROOT, 'embed')).filter(
     (name) => name.endsWith('.svg') && !/-still\.svg$|^strip-/.test(name),
   );
-  assert.equal(files.length, 23);
+  assert.equal(files.length, 21);
   await browser.reducedMotion(true);
   try {
     for (const name of files) {

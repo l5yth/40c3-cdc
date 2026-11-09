@@ -26,7 +26,7 @@ chromium --kiosk "https://l5yth.github.io/40c3-cdc/play/?a=banner&c=5"
 | Parameter | Values |
 | --- | --- |
 | `a` | `banner`, `typewriter`, `blink`, `conveyor` |
-| `c` | `5`, `A`, `B`. For `conveyor` also `0` |
+| `c` | `5`, `A`, `B` |
 
 ## Use offline
 

@@ -75,25 +75,30 @@ function pngSize(path) {
 
 test('generateEmbeds makes every SVG of ACCEPTANCE C1', () => {
   const names = [...generateEmbeds('.').keys()];
-  assert.equal(names.length, 30);
+  assert.equal(names.length, 27);
   for (const name of [
     'typewriter-5.svg',
     'blink-B-transparent.svg',
     'banner-A.svg',
     'banner-B-still.svg',
-    'conveyor-0.svg',
+    'conveyor-B.svg',
     'conveyor-5-transparent.svg',
     'strip-A.svg',
   ]) {
     assert.ok(names.includes(name), name);
   }
+  assert.deepEqual(
+    names.filter((name) => /-0[-.]/.test(name)),
+    [],
+    'green is off brand',
+  );
 });
 
 test('stillNames picks the banner stills and the strips', () => {
   const names = stillNames(generateEmbeds('.'));
-  assert.equal(names.length, 7);
+  assert.equal(names.length, 6);
   assert.ok(names.includes('banner-5-still.svg'));
-  assert.ok(names.includes('strip-0.svg'));
+  assert.ok(names.includes('strip-B.svg'));
   assert.ok(!names.includes('banner-5.svg'));
 });
 
@@ -129,8 +134,8 @@ test('compareStills passes on a fresh build and names a replaced PNG', () => {
   const dir = join(root, 'embed');
   const files = generateEmbeds(root);
   assert.deepEqual(compareStills(dir, files), []);
-  cpSync(join(dir, 'strip-A.png'), join(dir, 'strip-0.png'));
-  assert.deepEqual(compareStills(dir, files), ['differs from a fresh build: strip-0.png']);
+  cpSync(join(dir, 'strip-A.png'), join(dir, 'strip-5.png'));
+  assert.deepEqual(compareStills(dir, files), ['differs from a fresh build: strip-5.png']);
   assert.equal(main(['--check', '--root', root]), 1);
 });
 
