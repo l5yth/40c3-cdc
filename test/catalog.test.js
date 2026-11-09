@@ -97,6 +97,21 @@ test('groupItems makes one item per stem, sorted', () => {
   );
 });
 
+test('groupItems sorts by the given groups first, then by stem', () => {
+  const paths = ['d/b_dark.svg', 'd/a_dark.svg', 'd/c_light.svg'];
+  assert.deepEqual(
+    groupItems(paths, [/_light$/, /_dark$/]).map(({ stem }) => stem),
+    ['c_light', 'a_dark', 'b_dark'],
+  );
+});
+
+test('groupItems puts a stem outside every group last', () => {
+  assert.deepEqual(
+    groupItems(['d/a_other.svg', 'd/z_first.svg'], [/_first$/]).map(({ stem }) => stem),
+    ['z_first', 'a_other'],
+  );
+});
+
 test('animationItem links the player and describes the image', () => {
   const lockup = animationItem('blink', 'A', true);
   assert.equal(lockup.stem, 'blink-A-transparent');
@@ -106,10 +121,10 @@ test('animationItem links the player and describes the image', () => {
   assert.match(String(belt.snippet), /alt="Line art of radios/);
 });
 
-test('the sections list 23 animations and 7 stills', () => {
-  assert.equal(animationSection().items.length, 23);
+test('the sections list 21 animations and 6 stills', () => {
+  assert.equal(animationSection().items.length, 21);
   const stills = stillSection();
-  assert.equal(stills.items.length, 7);
+  assert.equal(stills.items.length, 6);
   assert.deepEqual(stills.items[0].downloads, [
     { label: 'SVG', href: 'embed/banner-5-still.svg' },
     { label: 'PNG', href: 'embed/banner-5-still.png' },
@@ -129,16 +144,49 @@ test('folderSections puts known folders first and titles the rest by name', () =
   );
 });
 
-test('the catalog of this repository has all sections and 65 items', () => {
+test('folderSections applies the item order of one folder only', () => {
+  const root = tree(['p/x/a_2.svg', 'p/x/b_1.svg', 'p/y/a_2.svg', 'p/y/b_1.svg']);
+  const sections = folderSections(root, 'p', {}, { x: [/_1$/, /_2$/] });
+  assert.deepEqual(
+    sections.map(({ id, items }) => [id, items.map(({ stem }) => stem)]),
+    [
+      ['x', ['b_1', 'a_2']],
+      ['y', ['a_2', 'b_1']],
+    ],
+  );
+});
+
+test('the catalog of this repository has all sections and 58 items', () => {
   const sections = buildCatalog('.');
   assert.deepEqual(
     sections.map(({ id, items }) => [id, items.length]),
     [
-      ['animations', 23],
-      ['stills', 7],
+      ['animations', 21],
+      ['stills', 6],
       ['logo', 9],
-      ['pattern', 16],
+      ['pattern', 12],
       ['matrix', 10],
+    ],
+  );
+});
+
+test('the patterns go masters, neutral, dark, tiled previews (SPEC D10)', () => {
+  const pattern = buildCatalog('.').find(({ id }) => id === 'pattern');
+  assert.deepEqual(
+    pattern?.items.map(({ stem }) => stem),
+    [
+      'Pattern4',
+      'Pattern5',
+      'Pattern6',
+      'Pattern4_neutral-on-transparent',
+      'Pattern5_neutral-on-transparent',
+      'Pattern6_neutral-on-transparent',
+      'Pattern4_dark-on-transparent',
+      'Pattern5_dark-on-transparent',
+      'Pattern6_dark-on-transparent',
+      'Pattern4_tiled-preview',
+      'Pattern5_tiled-preview',
+      'Pattern6_tiled-preview',
     ],
   );
 });

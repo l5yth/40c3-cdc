@@ -174,7 +174,7 @@ for (const [query, animation, color] of [
   ['?a=typewriter&c=B', 'typewriter', 'B'],
   ['?a=nope&c=0', 'banner', '5'],
   ['?a=blink&c=0', 'blink', '5'],
-  ['?a=conveyor&c=0', 'conveyor', '0'],
+  ['?a=conveyor&c=0', 'conveyor', 'A'],
 ]) {
   test(`E2: play/${query} resolves to ${animation} ${color}`, async () => {
     await browser.viewport(800, 450);

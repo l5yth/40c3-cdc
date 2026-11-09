@@ -75,7 +75,7 @@ for (const [search, animation, color] of [
   ['?a=typewriter&c=B', 'typewriter', 'B'],
   ['?a=nope&c=0', 'banner', '5'],
   ['?a=blink&c=0', 'blink', '5'],
-  ['?a=conveyor&c=0', 'conveyor', '0'],
+  ['?a=conveyor&c=0', 'conveyor', 'A'],
   ['?a=constructor', 'banner', '5'],
 ]) {
   test(`resolvePlayer("${search}") is ${animation} in color ${color}`, () => {
@@ -95,9 +95,9 @@ test('the banner scene draws a dark belt on the neutral ground', () => {
 });
 
 test('the conveyor only uses the strip slot', () => {
-  assert.deepEqual(playerSources('conveyor', '0'), {
+  assert.deepEqual(playerSources('conveyor', '5'), {
     lockup: undefined,
-    strip: '../embed/conveyor-0-transparent.svg',
+    strip: '../embed/conveyor-5-transparent.svg',
   });
 });
 
@@ -109,7 +109,7 @@ test('typewriter and blink only use the lockup slot', () => {
 });
 
 test('the player config lists colors and grounds', () => {
-  assert.deepEqual(CONFIG.animations.conveyor, ['A', '5', '0', 'B']);
+  assert.deepEqual(CONFIG.animations.conveyor, ['A', '5', 'B']);
   assert.equal(CONFIG.grounds.B, '#ebedf0');
   assert.equal(CONFIG.grounds['5'], '#001300');
 });

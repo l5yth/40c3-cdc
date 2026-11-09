@@ -43,7 +43,7 @@ export const NEUTRAL = '#ebedf0';
  *
  * @type {Readonly<Record<string, string>>}
  */
-export const PALETTE = Object.freeze({ 0: '#75b44b', 5: '#ea6f82', A: NEUTRAL, B: DARK });
+export const PALETTE = Object.freeze({ 5: '#ea6f82', A: NEUTRAL, B: DARK });
 
 /**
  * Return the ground color that goes with a palette index.
@@ -70,7 +70,7 @@ export const ANIMATIONS = Object.freeze({
   typewriter: Object.freeze({ colors: ['5', 'A', 'B'], transparent: true }),
   blink: Object.freeze({ colors: ['5', 'A', 'B'], transparent: true }),
   banner: Object.freeze({ colors: ['5', 'A', 'B'], transparent: false }),
-  conveyor: Object.freeze({ colors: ['A', '5', '0', 'B'], transparent: true }),
+  conveyor: Object.freeze({ colors: ['A', '5', 'B'], transparent: true }),
 });
 
 /**

@@ -27,7 +27,7 @@ test('groundOf pairs index B with the neutral ground', () => {
 });
 
 test('groundOf pairs every other index with the dark ground', () => {
-  for (const color of ['0', '5', 'A']) {
+  for (const color of ['5', 'A']) {
     assert.equal(groundOf(color), DARK);
   }
 });
@@ -37,6 +37,13 @@ test('every animation color exists in the palette', () => {
     for (const color of colors) {
       assert.ok(PALETTE[color], `missing palette entry ${color}`);
     }
+  }
+});
+
+test('green is off brand: no palette entry and no animation color (SPEC D8)', () => {
+  assert.equal(Object.hasOwn(PALETTE, '0'), false);
+  for (const { colors } of Object.values(ANIMATIONS)) {
+    assert.equal(colors.includes('0'), false);
   }
 });
 

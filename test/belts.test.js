@@ -73,8 +73,8 @@ test('the conveyor has a ground unless transparent', () => {
 });
 
 test('the still strip has three tiles and no animation', () => {
-  const svg = renderStrip(TILES, { color: '0' });
-  assert.match(svg, /color="#75b44b"/);
+  const svg = renderStrip(TILES, { color: '5' });
+  assert.match(svg, /color="#ea6f82"/);
   assert.equal(svg.match(/<use /g)?.length, 3);
   assert.doesNotMatch(svg, /@keyframes/);
 });
